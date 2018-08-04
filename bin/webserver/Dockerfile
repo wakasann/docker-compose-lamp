@@ -4,10 +4,19 @@ RUN apt-get -y update --fix-missing
 RUN apt-get upgrade -y
 
 # Install useful tools
-RUN apt-get -y install nano
+RUN apt-get -y install nano vim
 
 # Install important libraries
 RUN apt-get -y install --fix-missing apt-utils build-essential git curl libcurl3 libcurl3-dev zip
+
+# Install supervisor
+
+RUN apt-get -y install supervisor
+
+# Install openssl and cron
+RUN apt-get -y install libssl-dev openssl
+RUN apt-get install -y cron
+
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -15,6 +24,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install xdebug
 RUN pecl install xdebug-2.5.0
 RUN docker-php-ext-enable xdebug
+
+RUN pecl install -o -f redis \
+&&  rm -rf /tmp/pear \
+&&  docker-php-ext-enable redis
+
 
 # Other PHP7 Extensions
 
@@ -29,6 +43,7 @@ RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install curl
 RUN docker-php-ext-install tokenizer
 RUN docker-php-ext-install json
+RUN docker-php-ext-install bcmath
 
 RUN apt-get -y install zlib1g-dev
 RUN docker-php-ext-install zip
